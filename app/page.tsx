@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { mockCars } from '../mockData';
 import { Car } from 'lucide-react';
@@ -15,10 +15,8 @@ interface Car {
   description: string;
 }
 
-const europeanBrands = ['BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Volvo', 'Porsche', 'Ferrari', 'Lamborghini'];
-
 export default function Home() {
-  const [cars, setCars] = useState<Car[]>(mockCars);
+  const [cars, setCars] = useState<Car[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('price-asc');
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -32,43 +30,47 @@ export default function Home() {
     description: ''
   });
 
+  useEffect(() => {
+    setCars(mockCars.filter(car => !car.model.toLowerCase().includes('ford')));
+  }, []);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const newCar: Car = {
-      id: Math.max(...cars.map(car => car.id)) + 1,
-      make: formData.make,
-      model: formData.model,
-      year: parseInt(formData.year),
-      price: parseFloat(formData.price),
-      mileage: parseInt(formData.mileage),
-      description: formData.description
-    };
-    setCars([...cars, newCar]);
-    setFormData({
-      make: '',
-      model: '',
-      year: '',
-      price: '',
-      mileage: '',
-      description: ''
-    });
-    setIsFormVisible(false);
+    if (!formData.model.toLowerCase().includes('ford')) {
+      const newCar: Car = {
+        id: Math.max(...cars.map(car => car.id)) + 1,
+        make: formData.make,
+        model: formData.model,
+        year: parseInt(formData.year),
+        price: parseFloat(formData.price),
+        mileage: parseInt(formData.mileage),
+        description: formData.description
+      };
+      setCars([...cars, newCar]);
+      setFormData({
+        make: '',
+        model: '',
+        year: '',
+        price: '',
+        mileage: '',
+        description: ''
+      });
+      setIsFormVisible(false);
+    } else {
+      alert("Ford cars are not allowed.");
+    }
   };
 
   const handleDelete = (id: number) => {
-    setCars(cars.filter(car => car.id !== id));
+    setCars(cars.filter(car => car.id !== id && !car.model.toLowerCase().includes('ford')));
   };
 
   const filteredAndSortedCars = cars
-    .sort((a, b) => {
-      if (europeanBrands.includes(a.make) && !europeanBrands.includes(b.make)) return -1;
-      if (!europeanBrands.includes(a.make) && europeanBrands.includes(b.make)) return 1;
-      return 0;
-    })
     .filter(car =>
-      car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      !car.model.toLowerCase().includes('ford') &&
+      (car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
       car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      car.description.toLowerCase().includes(searchTerm.toLowerCase())
+      car.description.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortOption === 'price-asc') return a.price - b.price;
@@ -182,7 +184,7 @@ export default function Home() {
         </div>
         <div className={styles.carsContainer}>
           {filteredAndSortedCars.map(car => (
-            <div key={car.id} className={`${styles.carItem} ${europeanBrands.includes(car.make) ? styles.europeanCar : ''}`}>
+            <div key={car.id} className={styles.carItem}>
               <h3>{car.make} {car.model} <span className={styles.year}>({car.year})</span></h3>
               <p className={styles.price}>${car.price.toLocaleString()}</p>
               <p className={styles.mileage}>{car.mileage.toLocaleString()} miles</p>
