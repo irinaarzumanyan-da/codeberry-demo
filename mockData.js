@@ -18,15 +18,6 @@ export const mockCars = [
     description: "Reliable compact car with modern features."
   },
   {
-    id: 3,
-    make: "Ford",
-    model: "F-150",
-    year: 2021,
-    price: 35000,
-    mileage: 10000,
-    description: "Powerful pickup truck with towing capacity."
-  },
-  {
     id: 4,
     make: "Tesla",
     model: "Model 3",
