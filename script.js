@@ -6,6 +6,11 @@ function saveCars() {
     localStorage.setItem('cars', JSON.stringify(cars));
 }
 
+// Function to determine if a car is European
+function isEuropeanCar(car) {
+    return car.region.toLowerCase() === 'europe';
+}
+
 // Function to add a new car
 function addCar(event) {
     event.preventDefault();
@@ -16,6 +21,7 @@ function addCar(event) {
         year: parseInt(document.getElementById('year').value),
         price: parseFloat(document.getElementById('price').value),
         mileage: parseInt(document.getElementById('mileage').value),
+        region: document.getElementById('region').value,
         description: document.getElementById('description').value
     };
     cars.push(newCar);
@@ -28,6 +34,14 @@ function addCar(event) {
 function displayCars() {
     const carsContainer = document.getElementById('cars-container');
     carsContainer.innerHTML = '';
+    
+    // Sort cars with European cars first
+    cars.sort((a, b) => {
+        if (isEuropeanCar(a) && !isEuropeanCar(b)) return -1;
+        if (!isEuropeanCar(a) && isEuropeanCar(b)) return 1;
+        return 0;
+    });
+
     cars.forEach(car => {
         const carElement = document.createElement('div');
         carElement.classList.add('car-item');
@@ -35,6 +49,7 @@ function displayCars() {
             <h3>${car.make} ${car.model} (${car.year})</h3>
             <p>Price: $${car.price}</p>
             <p>Mileage: ${car.mileage} miles</p>
+            <p>Region: ${car.region}</p>
             <p>${car.description}</p>
             <button onclick="editCar(${car.id})">Edit</button>
             <button onclick="deleteCar(${car.id})">Delete</button>
@@ -62,6 +77,8 @@ function searchAndFilterCars() {
     );
     
     filteredCars.sort((a, b) => {
+        if (isEuropeanCar(a) && !isEuropeanCar(b)) return -1;
+        if (!isEuropeanCar(a) && isEuropeanCar(b)) return 1;
         if (sortOption === 'price-asc') return a.price - b.price;
         if (sortOption === 'price-desc') return b.price - a.price;
         if (sortOption === 'year-desc') return b.year - a.year;
@@ -77,6 +94,7 @@ function searchAndFilterCars() {
             <h3>${car.make} ${car.model} (${car.year})</h3>
             <p>Price: $${car.price}</p>
             <p>Mileage: ${car.mileage} miles</p>
+            <p>Region: ${car.region}</p>
             <p>${car.description}</p>
             <button onclick="deleteCar(${car.id})">Delete</button>
         `;
@@ -93,6 +111,7 @@ function editCar(id) {
         document.getElementById('year').value = car.year;
         document.getElementById('price').value = car.price;
         document.getElementById('mileage').value = car.mileage;
+        document.getElementById('region').value = car.region;
         document.getElementById('description').value = car.description;
         
         // Change the form submission behavior
@@ -112,6 +131,7 @@ function updateCar(event, id) {
         year: parseInt(document.getElementById('year').value),
         price: parseFloat(document.getElementById('price').value),
         mileage: parseInt(document.getElementById('mileage').value),
+        region: document.getElementById('region').value,
         description: document.getElementById('description').value
     };
     const index = cars.findIndex(car => car.id === id);
