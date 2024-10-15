@@ -167,6 +167,11 @@
   background-color: #d32f2f;
 }
 
+.europeanCar {
+  border-left: 4px solid #4CAF50;
+  padding-left: 12px;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
