@@ -16,7 +16,7 @@ interface Car {
 }
 
 export default function Home() {
-  const [cars, setCars] = useState<Car[]>([]);
+  const [cars, setCars] = useState<Car[]>(mockCars.filter(car => !car.model.toLowerCase().includes('ford')));
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('price-asc');
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -31,7 +31,7 @@ export default function Home() {
   });
 
   useEffect(() => {
-    setCars(mockCars.filter(car => !car.model.toLowerCase().includes('ford')));
+    setCars(prevCars => prevCars.filter(car => !car.model.toLowerCase().includes('ford')));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -69,8 +69,8 @@ export default function Home() {
     .filter(car =>
       !car.model.toLowerCase().includes('ford') &&
       (car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      car.description.toLowerCase().includes(searchTerm.toLowerCase()))
+       car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       car.description.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) => {
       if (sortOption === 'price-asc') return a.price - b.price;
