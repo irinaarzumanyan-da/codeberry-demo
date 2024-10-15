@@ -16,7 +16,7 @@ interface Car {
 }
 
 export default function Home() {
-  const [cars, setCars] = useState<Car[]>(mockCars);
+  const [cars, setCars] = useState<Car[]>(mockCars.filter(car => car.make !== 'Ford'));
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('price-asc');
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -32,8 +32,8 @@ export default function Home() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (formData.model.toLowerCase().includes('ford')) {
-      alert("Ford cars are not allowed.");
+    if (formData.make.toLowerCase() === 'ford') {
+      alert("Ford models are not allowed.");
       return;
     }
     const newCar: Car = {
@@ -58,12 +58,12 @@ export default function Home() {
   };
 
   const handleDelete = (id: number) => {
-    setCars(cars.filter(car => car.id !== id && !car.model.toLowerCase().includes('ford')));
+    setCars(cars.filter(car => car.id !== id && car.make !== 'Ford'));
   };
 
   const filteredAndSortedCars = cars
     .filter(car =>
-      !car.model.toLowerCase().includes('ford') &&
+      car.make !== 'Ford' &&
       (car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
       car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
       car.description.toLowerCase().includes(searchTerm.toLowerCase()))
